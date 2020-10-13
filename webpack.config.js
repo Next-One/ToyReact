@@ -1,5 +1,8 @@
 const path = require('path')
 
+const {CleanWebpackPlugin} = require('clean-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
 module.exports = {
   entry: {
     main: path.resolve(__dirname, 'src', 'index.js')
@@ -30,5 +33,12 @@ module.exports = {
   resolve: {
     extensions: ['.js','jsx']
   },
-  devtool: false
+  devtool: false,
+  plugins: [
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({title: 'ToyReact'})
+  ],
+  devServer: {
+    contentBase: './dist'
+  }
 }

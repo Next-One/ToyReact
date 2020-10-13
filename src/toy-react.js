@@ -20,12 +20,12 @@ export function createElement(tag, data = null, children = null) {
     flags = VNodeFlags.PORTAL
     tag = data && data.target
   } else {
-    if (isObject(tag)) {
+    if (tag instanceof Component) {
       flags = tag.functional
         ? VNodeFlags.COMPONENT_FUNCTIONAL
         : VNodeFlags.COMPONENT_STATEFUL_NORMAL
     } else if (isFunction(tag)) {
-      flags = tag.prototype && tag.render
+      flags = tag.prototype && tag.prototype.render
         ? VNodeFlags.COMPONENT_STATEFUL_NORMAL
         : VNodeFlags.COMPONENT_FUNCTIONAL
     }

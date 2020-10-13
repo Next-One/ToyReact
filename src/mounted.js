@@ -1,8 +1,9 @@
-import {isObject, isString, domPropsRE, resolveClassToClassName} from "./utils"
+import {domPropsRE, isObject, isString, resolveClassToClassName} from "./utils"
 import {createTextVNode} from "./toy-react"
 import {ChildrenFlags, VNodeFlags} from "./flags"
 
 export function mount(vnode, container, isSVG) {
+  console.log(vnode, 'vnode--------')
   const {flags} = vnode
   if (flags & VNodeFlags.ELEMENT) {
     mountElement(vnode, container, isSVG)
@@ -54,9 +55,9 @@ function mountData(el, data) {
         break
       }
       default: {
-        if(key[0] === 'o' && key[1] === 'n'){
+        if (key[0] === 'o' && key[1] === 'n') {
           el.addEventListener(key.slice(2), value)
-        }else if (domPropsRE.test(key)) {
+        } else if (domPropsRE.test(key)) {
           el[key] = value
         } else {
           el.setAttribute(key, value)
@@ -68,9 +69,9 @@ function mountData(el, data) {
 
 
 function mountComponent(vnode, container, isSVG) {
-  if(vnode.flags & VNodeFlags.COMPONENT_STATEFUL){
+  if (vnode.flags & VNodeFlags.COMPONENT_STATEFUL) {
     mountStatefulComponent(vnode, container, isSVG)
-  }else{
+  } else {
     mountFunctionalComponent(vnode, container, isSVG)
   }
 }
@@ -89,19 +90,18 @@ function mountFunctionalComponent(vnode, container, isSVG) {
 }
 
 
-
 function mountFragment(vnode, container, isSVG) {
-  const {children,childrenFlags} = vnode
-  switch (childrenFlags){
-    case ChildrenFlags.SINGLE_VNODE:{
-      mount(children,container,isSVG)
-      break;
+  const {children, childrenFlags} = vnode
+  switch (childrenFlags) {
+    case ChildrenFlags.SINGLE_VNODE: {
+      mount(children, container, isSVG)
+      break
     }
-    case ChildrenFlags.MULTIPLE:{
+    case ChildrenFlags.MULTIPLE: {
       children.forEach(child => mount(child, container, isSVG))
-      break;
+      break
     }
-    default:{
+    default: {
       const placeholder = createTextVNode('')
       mountText(placeholder, container)
     }
@@ -109,12 +109,12 @@ function mountFragment(vnode, container, isSVG) {
 }
 
 function mountPortal(vnode, container, isSVG) {
-  const {tag,children,childrenFlags} = vnode
+  const {tag, children, childrenFlags} = vnode
   let target = isString(tag) ? document.querySelector(tag) : tag
-  if(!target) target = container
-  if(childrenFlags & ChildrenFlags.SINGLE_VNODE){
+  if (!target) target = container
+  if (childrenFlags & ChildrenFlags.SINGLE_VNODE) {
     mount(children, target, isSVG)
-  }else if(childrenFlags & ChildrenFlags.MULTIPLE){
+  } else if (childrenFlags & ChildrenFlags.MULTIPLE) {
     children.forEach(child => mount(child, target, isSVG))
   }
   const placeholder = createTextVNode('')

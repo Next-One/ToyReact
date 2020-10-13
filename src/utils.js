@@ -34,3 +34,30 @@ export function normalizeVNodes(children) {
 }
 
 
+export function mountPropsData(el, data) {
+  if(!isObject(data)) return
+  for (const [key, value] of Object.entries(data)) {
+    switch (key) {
+      case 'style': {
+        for (const [k, v] of Object.entries(value)) {
+          el.style[k] = v
+        }
+        break
+      }
+      case 'class': {
+        el.className = resolveClassToClassName(value).join(' ')
+        break
+      }
+      default: {
+        if (key[0] === 'o' && key[1] === 'n') {
+          el.addEventListener(key.slice(2), value)
+        } else if (domPropsRE.test(key)) {
+          el[key] = value
+        } else {
+          el.setAttribute(key, value)
+        }
+      }
+    }
+  }
+}
+
